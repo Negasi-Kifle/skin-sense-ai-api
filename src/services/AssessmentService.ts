@@ -3,6 +3,7 @@ import { Guest } from "@/models/Guest";
 import { HttpError } from "@/utils/HttpError";
 import { getSkinAnalysisProvider } from "@/ai/providerFactory";
 import { MockSkinAnalysisProvider } from "@/ai/MockSkinAnalysisProvider";
+import { UnusableImageError } from "@/ai/types";
 import { logger } from "@/utils/logger";
 import { toAssessmentDTO } from "@/utils/mappers";
 import type { CreateAssessmentInput } from "@/validators/assessment.schema";
@@ -22,6 +23,11 @@ export async function createAssessment(input: CreateAssessmentInput, therapistId
   try {
     attributes = await provider.analyze(input.imageBase64, input.mediaType);
   } catch (err) {
+    if (err instanceof UnusableImageError) {
+      // Model gave a definite "this isn't a usable skin photo" — do NOT fall
+      // back to mock (which would invent attributes). Surface as 422.
+      throw HttpError.unprocessable(err.message);
+    }
     logger.warn({ err, providerId }, "Primary skin analysis provider failed — using mock fallback");
     const fallback = new MockSkinAnalysisProvider();
     attributes = await fallback.analyze(input.imageBase64, input.mediaType);

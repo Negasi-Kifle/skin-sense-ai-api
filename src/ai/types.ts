@@ -23,3 +23,13 @@ export interface SkinAnalysisProvider {
 }
 
 export type MediaType = "image/jpeg" | "image/png";
+
+// Thrown by a provider when the model determines the image is not a usable
+// skin/face photo. The service translates this to a 422 — NOT a mock fallback,
+// because the model gave a successful, definite "no" rather than a failure.
+export class UnusableImageError extends Error {
+  constructor(reason: string) {
+    super(reason);
+    this.name = "UnusableImageError";
+  }
+}
