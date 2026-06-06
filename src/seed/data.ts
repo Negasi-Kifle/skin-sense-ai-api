@@ -1,6 +1,22 @@
 import type { IngredientRole } from "@/models/Ingredient";
 import type { TreatmentCategory } from "@/models/Treatment";
 
+export interface SeedGoal {
+  value: string;
+  label: string;
+  order: number;
+  active: boolean;
+}
+
+export const SEED_GOALS: SeedGoal[] = [
+  { value: "hydration", label: "Hydration", order: 1, active: true },
+  { value: "glow", label: "Glow", order: 2, active: true },
+  { value: "relaxation", label: "Relaxation", order: 3, active: true },
+  { value: "anti_aging", label: "Anti-aging", order: 4, active: true },
+  { value: "evenness", label: "Even tone", order: 5, active: true },
+  { value: "soothing", label: "Soothing", order: 6, active: true },
+];
+
 // Seed data answers PRD OQ2 in the same way the client-side mock-menu does —
 // a representative Kuriftu menu so the demo can show the FR9 ingredient-driven
 // swap (high-sensitivity guest avoids services flagged irritant).

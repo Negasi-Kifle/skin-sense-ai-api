@@ -8,12 +8,14 @@ import { logger } from "@/utils/logger";
 import { errorHandler, notFoundHandler } from "@/middleware/errorHandler";
 import { authRouter } from "@/routes/auth.routes";
 import { treatmentsRouter } from "@/routes/treatments.routes";
+import { goalsRouter } from "@/routes/goals.routes";
 import { guestsRouter } from "@/routes/guests.routes";
 import { assessmentsRouter } from "@/routes/assessments.routes";
 import { plansRouter } from "@/routes/plans.routes";
 import { bookingsRouter } from "@/routes/bookings.routes";
 import { dashboardRouter } from "@/routes/dashboard.routes";
 import { usersRouter } from "@/routes/users.routes";
+import { ingredientsRouter } from "@/routes/ingredients.routes";
 
 export function createApp(): express.Express {
   const app = express();
@@ -39,12 +41,14 @@ export function createApp(): express.Express {
 
   app.use("/api/auth", authRouter);
   app.use("/api/treatments", treatmentsRouter);
+  app.use("/api/goals", goalsRouter);
   app.use("/api/guests", guestsRouter);
   app.use("/api/assessments", assessmentsRouter);
   app.use("/api/plans", plansRouter);
   app.use("/api/bookings", bookingsRouter);
   app.use("/api/dashboard", dashboardRouter);
   app.use("/api/users", usersRouter);
+  app.use("/api/ingredients", ingredientsRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

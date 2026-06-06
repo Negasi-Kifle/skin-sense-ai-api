@@ -5,7 +5,8 @@ import { hashPassword } from "@/utils/hash";
 import { User } from "@/models/User";
 import { Ingredient, type IngredientRole } from "@/models/Ingredient";
 import { Treatment } from "@/models/Treatment";
-import { SEED_INGREDIENTS, SEED_TREATMENTS } from "./data";
+import { Goal } from "@/models/Goal";
+import { SEED_GOALS, SEED_INGREDIENTS, SEED_TREATMENTS } from "./data";
 
 interface SeededIngredient {
   _id: unknown;
@@ -104,12 +105,27 @@ async function seedTreatments(
   logger.info({ count: SEED_TREATMENTS.length }, "Seeded Kuriftu treatments");
 }
 
+async function seedGoals(): Promise<void> {
+  for (const g of SEED_GOALS) {
+    await Goal.updateOne(
+      { value: g.value },
+      {
+        $set: { label: g.label, order: g.order, active: g.active },
+        $setOnInsert: { value: g.value },
+      },
+      { upsert: true }
+    );
+  }
+  logger.info({ count: SEED_GOALS.length }, "Seeded intake goals");
+}
+
 async function main(): Promise<void> {
   await connectDB();
   try {
     await seedUsers();
     const ingredientByName = await seedIngredients();
     await seedTreatments(ingredientByName);
+    await seedGoals();
     logger.info("Seed complete");
   } finally {
     await disconnectDB();

@@ -5,10 +5,19 @@ import type { TreatmentPlanDoc } from "@/models/TreatmentPlan";
 import type { BookingDoc } from "@/models/Booking";
 import type { UserDoc } from "@/models/User";
 import type { IngredientDoc } from "@/models/Ingredient";
+import type { GoalDoc } from "@/models/Goal";
 
 // Map Mongoose docs to the on-the-wire shapes that the admin + client apps
 // already type against (`id` as string, ISO timestamps). Centralising avoids
 // scattering `toString()` and `toISOString()` across controllers.
+
+export const toGoalDTO = (d: GoalDoc) => ({
+  id: String(d._id),
+  value: d.value,
+  label: d.label,
+  order: d.order,
+  active: d.active,
+});
 
 export const toIngredientDTO = (d: IngredientDoc) => ({
   id: String(d._id),
