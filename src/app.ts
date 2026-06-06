@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import pinoHttp from "pino-http";
-import { corsOrigins } from "@/config/env";
+import { corsAllowAll, corsOrigins } from "@/config/env";
 import { logger } from "@/utils/logger";
 import { errorHandler, notFoundHandler } from "@/middleware/errorHandler";
 import { authRouter } from "@/routes/auth.routes";
@@ -22,14 +22,16 @@ export function createApp(): express.Express {
 
   app.use(helmet());
   app.use(
-    cors({
-      origin: (origin, cb) => {
-        if (!origin) return cb(null, true); // curl, server-to-server
-        if (corsOrigins.includes(origin)) return cb(null, true);
-        return cb(new Error(`Origin ${origin} not allowed by CORS`));
-      },
-      credentials: true,
-    })
+    corsAllowAll
+      ? cors()
+      : cors({
+          origin: (origin, cb) => {
+            if (!origin) return cb(null, true); // curl, server-to-server
+            if (corsOrigins.includes(origin)) return cb(null, true);
+            return cb(new Error(`Origin ${origin} not allowed by CORS`));
+          },
+          credentials: true,
+        })
   );
   // Payloads include base64 photos (≤8MB raw → ~11MB encoded).
   app.use(express.json({ limit: "15mb" }));

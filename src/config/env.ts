@@ -6,7 +6,8 @@ const EnvSchema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
   LOG_LEVEL: z.string().default("info"),
 
-  CORS_ORIGINS: z.string().default("http://localhost:5173,http://localhost:5174"),
+  // Use "*" to allow any origin, or a comma-separated allowlist.
+  CORS_ORIGINS: z.string().default("*"),
 
   MONGODB_URI: z.string().min(1, "MONGODB_URI is required"),
 
@@ -37,6 +38,10 @@ if (!parsed.success) {
 
 export const env = parsed.data;
 
-export const corsOrigins = env.CORS_ORIGINS.split(",")
-  .map((s) => s.trim())
-  .filter(Boolean);
+export const corsAllowAll = env.CORS_ORIGINS.trim() === "*";
+
+export const corsOrigins = corsAllowAll
+  ? []
+  : env.CORS_ORIGINS.split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
