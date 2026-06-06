@@ -25,7 +25,7 @@ Default seeded accounts (override in `.env`):
 
 ```
 src/
-  ai/             SkinAnalysisProvider interface, Mock + Claude Vision adapters,
+  ai/             SkinAnalysisProvider interface, Mock + OpenAI Vision adapters,
                   PlanGenerator (ingredient-aware, PRD AI4-AI7).
   config/         env loader (zod-validated).
   controllers/    Thin: parse → call service → respond.
@@ -43,7 +43,7 @@ src/
 
 - `MOCK_MODE=true` (default): no network. Deterministic mock assessment + a
   rule-based PlanGenerator. Demo-safe.
-- `MOCK_MODE=false` + `ANTHROPIC_API_KEY=…`: Claude Vision performs the
+- `MOCK_MODE=false` + `OPENAI_API_KEY=…`: OpenAI Vision performs the
   assessment; the PlanGenerator still pre-filters server-side for
   high-sensitivity guests so safety never depends on the model alone (AI6).
 

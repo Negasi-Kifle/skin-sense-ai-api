@@ -6,7 +6,7 @@ export const SKIN_TYPES = ["dry", "normal", "combination", "oily"] as const;
 export const LOW_MED_HIGH = ["low", "medium", "high"] as const;
 export const TEXTURES = ["smooth", "uneven", "rough"] as const;
 export const PIGMENTATION_EVENNESS = ["even", "slightly_uneven", "uneven"] as const;
-export const ASSESSMENT_PROVIDERS = ["claude-vision", "mock"] as const;
+export const ASSESSMENT_PROVIDERS = ["openai-vision", "claude-vision", "mock"] as const;
 
 const SkinAttributesSchema = new Schema(
   {

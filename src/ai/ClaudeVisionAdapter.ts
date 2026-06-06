@@ -1,5 +1,4 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { env } from "@/config/env";
 import { logger } from "@/utils/logger";
 import {
   SkinAttributesSchema,
@@ -89,7 +88,7 @@ export class ClaudeVisionAdapter implements SkinAnalysisProvider {
     }
 
     const response = await this.client.messages.create({
-      model: env.ANTHROPIC_MODEL,
+      model: "claude-sonnet-4-6",
       max_tokens: 400,
       temperature: 0,
       system: SYSTEM_PROMPT,

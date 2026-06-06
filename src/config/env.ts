@@ -19,8 +19,8 @@ const EnvSchema = z.object({
     .string()
     .default("true")
     .transform((v) => v.toLowerCase() !== "false"),
-  ANTHROPIC_API_KEY: z.string().optional(),
-  ANTHROPIC_MODEL: z.string().default("claude-sonnet-4-6"),
+  OPENAI_API_KEY: z.string().optional(),
+  OPENAI_MODEL: z.string().default("gpt-4o"),
 
   SEED_ADMIN_EMAIL: z.string().email().default("admin@kuriftu.local"),
   SEED_ADMIN_PASSWORD: z.string().min(6).default("admin1234"),

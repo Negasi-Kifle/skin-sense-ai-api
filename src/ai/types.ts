@@ -15,7 +15,7 @@ export const SkinAttributesSchema = z.object({
 
 export type SkinAttributes = z.infer<typeof SkinAttributesSchema>;
 
-export type ProviderId = "claude-vision" | "mock";
+export type ProviderId = "openai-vision" | "claude-vision" | "mock";
 
 export interface SkinAnalysisProvider {
   readonly providerId: ProviderId;
