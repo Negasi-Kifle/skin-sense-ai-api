@@ -11,7 +11,7 @@ import { HttpError } from "@/utils/HttpError";
 export async function create(req: Request, res: Response): Promise<void> {
   if (!req.user) throw HttpError.unauthorized();
   const input = CreateBookingSchema.parse(req.body);
-  const booking = await BookingService.createBooking(input, req.user.sub);
+  const booking = await BookingService.createBooking(input, req.user.sub, req.user.role);
   res.status(201).json(booking);
 }
 
@@ -22,8 +22,9 @@ export async function list(req: Request, res: Response): Promise<void> {
 }
 
 export async function getOne(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw HttpError.unauthorized();
   const id = objectIdSchema.parse(req.params.id);
-  const booking = await BookingService.getBookingById(id);
+  const booking = await BookingService.getBookingByIdForUser(id, req.user.sub, req.user.role);
   res.json(booking);
 }
 

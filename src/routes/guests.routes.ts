@@ -4,4 +4,9 @@ import * as GuestsController from "@/controllers/guests.controller";
 
 export const guestsRouter = Router();
 
-guestsRouter.post("/", requireAuth, requireRole("staff"), GuestsController.create);
+guestsRouter.post(
+  "/",
+  requireAuth,
+  requireRole("staff", "customer"),
+  GuestsController.create
+);

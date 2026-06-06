@@ -16,6 +16,7 @@ import { bookingsRouter } from "@/routes/bookings.routes";
 import { dashboardRouter } from "@/routes/dashboard.routes";
 import { usersRouter } from "@/routes/users.routes";
 import { ingredientsRouter } from "@/routes/ingredients.routes";
+import { publicRouter } from "@/routes/public.routes";
 
 export function createApp(): express.Express {
   const app = express();
@@ -42,6 +43,7 @@ export function createApp(): express.Express {
   });
 
   app.use("/api/auth", authRouter);
+  app.use("/api/public", publicRouter);
   app.use("/api/treatments", treatmentsRouter);
   app.use("/api/goals", goalsRouter);
   app.use("/api/guests", guestsRouter);

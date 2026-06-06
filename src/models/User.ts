@@ -1,6 +1,8 @@
 import { Schema, model, type InferSchemaType, type Model } from "mongoose";
 
-export const USER_ROLES = ["therapist", "admin"] as const;
+export const USER_ROLES = ["therapist", "admin", "customer"] as const;
+export const STAFF_ROLES = ["therapist", "admin"] as const;
+export type StaffRole = (typeof STAFF_ROLES)[number];
 export type UserRole = (typeof USER_ROLES)[number];
 
 const UserSchema = new Schema(

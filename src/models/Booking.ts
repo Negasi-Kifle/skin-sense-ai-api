@@ -20,6 +20,7 @@ const BookingSchema = new Schema(
     // Denormalised guest name for cheap list views (PRD FR14).
     guestName: { type: String, required: true },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+    customerId: { type: Schema.Types.ObjectId, ref: "User", index: true, sparse: true },
     therapistName: { type: String, required: true },
     selectedItems: { type: [BookingItemSchema], default: [] },
     status: { type: String, enum: BOOKING_STATUSES, required: true, default: "pending", index: true },

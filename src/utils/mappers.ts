@@ -54,7 +54,9 @@ export const toGuestDTO = (d: GuestDoc) => ({
 export const toAssessmentDTO = (d: AssessmentDoc) => ({
   id: String(d._id),
   guestId: String(d.guestId),
-  therapistId: String(d.therapistId),
+  therapistId: d.therapistId ? String(d.therapistId) : undefined,
+  customerId: d.customerId ? String(d.customerId) : undefined,
+  source: d.source,
   attributes: d.attributes,
   provider: d.provider,
   imageRetained: d.imageRetained,
@@ -81,6 +83,7 @@ export const toBookingDTO = (d: BookingDoc) => ({
   planId: String(d.planId),
   guestId: String(d.guestId),
   guestName: d.guestName,
+  customerId: d.customerId ? String(d.customerId) : undefined,
   therapistName: d.therapistName,
   selectedItems: (d.selectedItems ?? []).map((i) => ({
     treatmentId: String(i.treatmentId),
@@ -94,11 +97,14 @@ export const toBookingDTO = (d: BookingDoc) => ({
   updatedAt: (d as unknown as { updatedAt: Date }).updatedAt.toISOString(),
 });
 
-export const toStaffUserDTO = (d: UserDoc) => ({
+export const toAppUserDTO = (d: UserDoc) => ({
   name: d.name,
   email: d.email,
   role: d.role,
 });
+
+/** @deprecated Use toAppUserDTO */
+export const toStaffUserDTO = toAppUserDTO;
 
 export const toUserDTO = (d: UserDoc) => ({
   id: String(d._id),

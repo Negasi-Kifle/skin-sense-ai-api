@@ -21,10 +21,15 @@ const SkinAttributesSchema = new Schema(
   { _id: false }
 );
 
+export const ASSESSMENT_SOURCES = ["staff", "public"] as const;
+
 const AssessmentSchema = new Schema(
   {
     guestId: { type: Schema.Types.ObjectId, ref: "Guest", required: true, index: true },
-    therapistId: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+    therapistId: { type: Schema.Types.ObjectId, ref: "User", index: true, sparse: true },
+    customerId: { type: Schema.Types.ObjectId, ref: "User", index: true, sparse: true },
+    source: { type: String, enum: ASSESSMENT_SOURCES, default: "staff" },
+    sessionToken: { type: String, index: true, sparse: true },
     attributes: { type: SkinAttributesSchema, required: true },
     provider: { type: String, enum: ASSESSMENT_PROVIDERS, required: true },
     imageRetained: { type: Boolean, required: true, default: false },

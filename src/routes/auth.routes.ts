@@ -6,3 +6,4 @@ export const authRouter = Router();
 authRouter.get("/register/status", AuthController.registrationStatus);
 authRouter.post("/register", AuthController.register);
 authRouter.post("/login", AuthController.login);
+authRouter.post("/register/customer", AuthController.registerCustomer);

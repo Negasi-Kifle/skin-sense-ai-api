@@ -32,15 +32,26 @@ function assertTransition(from: BookingStatus, to: BookingStatus): void {
   }
 }
 
-export async function createBooking(input: CreateBookingInput, therapistUserId: string) {
+export async function createBooking(
+  input: CreateBookingInput,
+  actorUserId: string,
+  actorRole: string
+) {
   const plan = await getPlanById(input.planId);
 
-  const therapist = await User.findById(therapistUserId);
-  if (!therapist) throw HttpError.unauthorized();
+  const actor = await User.findById(actorUserId);
+  if (!actor) throw HttpError.unauthorized();
   const guest = await Guest.findById(plan.guestId);
   if (!guest) throw HttpError.notFound("Guest not found for plan");
 
-  // Resolve selected ids → Treatment docs, drop unknowns.
+  if (actorRole === "customer") {
+    const ownsGuest =
+      guest.userId && String(guest.userId) === actorUserId;
+    if (!ownsGuest) {
+      throw HttpError.forbidden("You can only book from your own assessment journey");
+    }
+  }
+
   const selectedIds = input.selectedTreatmentIds;
   const treatments = await Treatment.find({ _id: { $in: selectedIds } });
   const byId = new Map(treatments.map((t) => [String(t._id), t]));
@@ -58,22 +69,37 @@ export async function createBooking(input: CreateBookingInput, therapistUserId: 
     throw HttpError.unprocessable("None of the selected treatments are valid");
   }
 
-  // FR11: recompute from DB.
   const totalETB = selectedItems.reduce((s, i) => {
     const t = byId.get(String(i.treatmentId));
     return s + (t?.priceETB ?? 0);
   }, 0);
 
+  const isCustomer = actorRole === "customer";
   const doc = await Booking.create({
     planId: plan._id,
     guestId: plan.guestId,
     guestName: guest.name,
-    createdBy: therapist._id,
-    therapistName: therapist.name,
+    createdBy: actor._id,
+    customerId: isCustomer ? actor._id : undefined,
+    therapistName: isCustomer ? "Self-service" : actor.name,
     selectedItems,
     status: "pending",
     totalETB,
   });
+  return toBookingDTO(doc);
+}
+
+export async function getBookingByIdForUser(id: string, userId: string, role: string) {
+  const doc = await Booking.findById(id);
+  if (!doc) throw HttpError.notFound("Booking not found");
+
+  if (role === "customer") {
+    const owns =
+      (doc.customerId && String(doc.customerId) === userId) ||
+      String(doc.createdBy) === userId;
+    if (!owns) throw HttpError.forbidden("You do not have access to this booking");
+  }
+
   return toBookingDTO(doc);
 }
 
