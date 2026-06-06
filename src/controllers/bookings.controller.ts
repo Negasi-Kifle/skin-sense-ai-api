@@ -16,8 +16,12 @@ export async function create(req: Request, res: Response): Promise<void> {
 }
 
 export async function list(req: Request, res: Response): Promise<void> {
+  if (!req.user) throw HttpError.unauthorized();
   const query = ListBookingsQuerySchema.parse(req.query);
-  const page = await BookingService.listBookings(query);
+  const page =
+    req.user.role === "customer"
+      ? await BookingService.listBookingsForCustomer(req.user.sub, query)
+      : await BookingService.listBookings(query);
   res.json(page);
 }
 

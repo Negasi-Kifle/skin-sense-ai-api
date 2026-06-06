@@ -4,7 +4,7 @@ import * as BookingsController from "@/controllers/bookings.controller";
 
 export const bookingsRouter = Router();
 
-bookingsRouter.get("/", requireAuth, requireRole("staff"), BookingsController.list);
+bookingsRouter.get("/", requireAuth, requireRole("staff", "customer"), BookingsController.list);
 bookingsRouter.get(
   "/:id",
   requireAuth,

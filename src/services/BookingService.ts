@@ -75,6 +75,7 @@ export async function createBooking(
   }, 0);
 
   const isCustomer = actorRole === "customer";
+  // Self-service bookings must always link the customer account.
   const doc = await Booking.create({
     planId: plan._id,
     guestId: plan.guestId,
@@ -103,15 +104,38 @@ export async function getBookingByIdForUser(id: string, userId: string, role: st
   return toBookingDTO(doc);
 }
 
-export async function listBookings(query: ListBookingsQuery) {
-  const filter: FilterQuery<BookingDoc> = {};
+function applyBookingListFilters(
+  filter: FilterQuery<BookingDoc>,
+  query: ListBookingsQuery,
+  options?: { includeTherapistFilter?: boolean }
+) {
   if (query.status) filter.status = query.status;
-  if (query.therapistId) filter.createdBy = query.therapistId;
+  if (options?.includeTherapistFilter !== false && query.therapistId) {
+    filter.createdBy = query.therapistId;
+  }
   if (query.dateFrom || query.dateTo) {
     filter.createdAt = {};
     if (query.dateFrom) filter.createdAt.$gte = new Date(query.dateFrom);
     if (query.dateTo) filter.createdAt.$lte = new Date(query.dateTo);
   }
+}
+
+export async function listBookings(query: ListBookingsQuery) {
+  const filter: FilterQuery<BookingDoc> = {};
+  applyBookingListFilters(filter, query);
+
+  const [items, total] = await Promise.all([
+    Booking.find(filter).sort({ createdAt: -1 }).skip(query.skip).limit(query.limit),
+    Booking.countDocuments(filter),
+  ]);
+  return { items: items.map(toBookingDTO), total, limit: query.limit, skip: query.skip };
+}
+
+export async function listBookingsForCustomer(userId: string, query: ListBookingsQuery) {
+  const filter: FilterQuery<BookingDoc> = {
+    $or: [{ customerId: userId }, { createdBy: userId }],
+  };
+  applyBookingListFilters(filter, query, { includeTherapistFilter: false });
 
   const [items, total] = await Promise.all([
     Booking.find(filter).sort({ createdAt: -1 }).skip(query.skip).limit(query.limit),
